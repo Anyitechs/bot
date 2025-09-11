@@ -32,7 +32,7 @@ class ImageCacheManager {
           (file: string) =>
             path.extname(file).toLowerCase() === '.png' &&
             path.basename(file).toLowerCase() !==
-              honeybadgerFilename.toLowerCase(),
+              honeybadgerFilename.toLowerCase()
         );
         this.cache.regularImages = imageFiles;
 
@@ -65,7 +65,7 @@ class ImageCacheManager {
       // Check for Golden Honey Badger
       if (this.cache.honeybadgerImage) {
         const goldenProbability = parseInt(
-          process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100',
+          process.env.GOLDEN_HONEY_BADGER_PROBABILITY || '100'
         );
         const probability = isNaN(goldenProbability)
           ? 100
@@ -74,14 +74,14 @@ class ImageCacheManager {
         const winningNumber = 1;
 
         logger.debug(
-          `Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`,
+          `Golden Honey Badger probability check: ${luckyNumber}/${probability} (wins if ${luckyNumber}=${winningNumber})`
         );
 
         if (luckyNumber === winningNumber) {
           randomImage = this.cache.honeybadgerImage;
           isGoldenHoneyBadger = true;
           logger.info(
-            `🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`,
+            `🏆 GOLDEN HONEY BADGER ASSIGNED to order with nonce: ${nonce} - FEES WILL BE ZERO`
           );
           return { randomImage, isGoldenHoneyBadger };
         }
@@ -90,7 +90,7 @@ class ImageCacheManager {
       // Select random regular image
       if (this.cache.regularImages.length > 0) {
         const randomIndex = Math.floor(
-          Math.random() * this.cache.regularImages.length,
+          Math.random() * this.cache.regularImages.length
         );
         randomImage = this.cache.regularImages[randomIndex];
       } else {
@@ -115,11 +115,16 @@ class ImageCacheManager {
     try {
       // Check if the image is already base64 data (legacy format)
       // Base64 strings are much longer than filenames and typically don't contain file extensions in the middle
-      if (image.length > 100 && !image.includes('.png') && !image.includes('.jpg') && !image.includes('.jpeg')) {
+      if (
+        image.length > 100 &&
+        !image.includes('.png') &&
+        !image.includes('.jpg') &&
+        !image.includes('.jpeg')
+      ) {
         logger.debug('Image appears to be base64 data, returning as-is');
         return image;
       }
-      
+
       // Otherwise, treat as filename and read from disk
       const imageData = await fs.readFile(`images/${image}`);
       return imageData.toString('base64');
